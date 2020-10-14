@@ -94,8 +94,41 @@ fun josephTask(menNumber: Int, choiceInterval: Int): Int {
  * Если имеется несколько самых длинных общих подстрок одной длины,
  * вернуть ту из них, которая встречается раньше в строке first.
  */
+
+/*Быстродействие: O(mn)
+Ресурсоёмкость: S(mn), где m и n - длины строк
+ */
+
 fun longestCommonSubstring(first: String, second: String): String {
-    TODO()
+    var maxLength = 0
+    var maxI = 0
+
+    if (first.isEmpty() || second.isEmpty()) {
+        return ""
+    }
+    if (first == second) {
+        return first
+    }
+
+    val table = arrayOfNulls<IntArray>(first.length)
+    for (i in table.indices) {
+        table[i] = IntArray(second.length)
+        for (j in table[i]!!.indices) {
+            if (first[i] == second[j]) {
+                table[i]!![j] = if (i != 0 && j != 0) {
+                    table[i - 1]!![j - 1] + 1
+                } else {
+                    1
+                }
+            }
+            if (table[i]!![j] > maxLength) {
+                maxLength = table[i]!![j]
+                maxI = i
+            }
+        }
+    }
+
+    return first.substring(maxI - maxLength + 1, maxI + 1)
 }
 
 /**
@@ -108,6 +141,50 @@ fun longestCommonSubstring(first: String, second: String): String {
  * Справка: простым считается число, которое делится нацело только на 1 и на себя.
  * Единица простым числом не считается.
  */
+
+/*В качестве решения используется решето Аткина
+Быстродействие: O(n)
+Ресурсоёмкость: S(n)
+ */
+
+
 fun calcPrimesNumber(limit: Int): Int {
-    TODO()
+    var count = 0
+    if (limit <= 1) return 0
+    if (limit >= 2) count++
+    if (limit >= 3) count++
+    val sieve = BooleanArray(limit)
+    for (i in 0 until limit)
+        sieve[i] = false
+    var x = 1
+    while (x * x < limit) {
+        var y = 1
+        while (y * y < limit) {
+            var n = (4 * x * x) + (y * y)
+            if (n <= limit && (n % 12 == 1 || n % 12 == 5))
+                sieve[n] = sieve[n] xor true
+            n = (3 * x * x) + (y * y)
+            if (n <= limit && n % 12 == 7)
+                sieve[n] = sieve[n] xor true
+            n = (3 * x * x) - (y * y)
+            if (x > y && n <= limit && n % 12 == 11)
+                sieve[n] = sieve[n] xor true
+            y++
+        }
+        x++
+    }
+    var r = 5
+    while (r * r < limit) {
+        if (sieve[r]) {
+            var i = r * r
+            while (i < limit) {
+                sieve[i] = false
+                i += r * r
+            }
+        }
+        r++
+    }
+    for (a in 5 until limit)
+        if (sieve[a]) count++
+    return count
 }

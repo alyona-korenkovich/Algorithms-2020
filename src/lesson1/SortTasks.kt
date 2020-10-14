@@ -2,6 +2,9 @@
 
 package lesson1
 
+import java.io.File
+import java.lang.IllegalArgumentException
+
 /**
  * Сортировка времён
  *
@@ -62,8 +65,34 @@ fun sortTimes(inputName: String, outputName: String) {
  *
  * В случае обнаружения неверного формата файла бросить любое исключение.
  */
+
+/*Быстродействие: O(n*log(n))
+Ресурсоёмкость: S(n)
+ */
+
 fun sortAddresses(inputName: String, outputName: String) {
-    TODO()
+    val outputStream = File(outputName).bufferedWriter()
+    val file = File(inputName).readLines()
+    val regEx = Regex("""^([А-Яа-яёЁA-Za-z\-.\s]+ [А-Яа-яёЁA-Za-z\-.\s]+) - ([А-Яа-яёЁ\-.\s]+ \d+)$""")
+    val map = hashMapOf<String, MutableList<String>>()
+    for (line in file) {
+        if (!line.contains(regEx)) {
+            throw IllegalArgumentException()
+        }
+        val match = regEx.find(line)
+        val address = match!!.groupValues[2]
+        val name = match.groupValues[1]
+        if (map[address] == null) map[address] = mutableListOf(name) else map[address]?.add(name)
+    }
+    map.map { it.value.sort() }
+    val sortedMap = map.toSortedMap(compareBy<String> { it.split(" ")[0] }.thenBy { it.split(" ")[1].toInt() })
+
+    for ((key, value) in sortedMap) {
+        val v = value.joinToString(", ")
+        outputStream.write("$key - $v")
+        outputStream.newLine()
+    }
+    outputStream.close()
 }
 
 /**
@@ -129,8 +158,56 @@ fun sortTemperatures(inputName: String, outputName: String) {
  * 2
  * 2
  */
+
+/*
+Быстродействие: O(n)
+Ресурсоёмкость: S(n?)
+ */
+
 fun sortSequence(inputName: String, outputName: String) {
-    TODO()
+    val outputStream = File(outputName).bufferedWriter()
+    val file = File(inputName).readLines()
+    val map = hashMapOf<Int, Int>()
+    val maxInt: Int
+    var count = 0
+    val maxInts = mutableListOf<Int>()
+    //запись в мапу по типу "число - количество его вхождений в последовательность"
+    for (line in file) {
+        val digit = line.toInt()
+        if (map.containsKey(digit)) {
+            map[digit] = map[digit]!! + 1
+        } else {
+            map[digit] = 1
+        }
+    }
+    //поиск чисел с максимальным числом вхождений
+    for ((key, value) in map) {
+        if (value > count) {
+            count = value
+        }
+    }
+    //поиск чисел, соответствующих новому count
+    for ((key, value) in map) {
+        if (count == value) {
+            maxInts.add(key)
+        }
+    }
+    //если ключей окажется несколько, выбираем минимальное по значению число
+    maxInt = maxInts.min()!!
+    //проходимся по всем ключам, выводя их на экран, а потом выводить maxInt count раз
+    for (line in file) {
+        val digit = line.toInt()
+        if (digit != maxInt) {
+            outputStream.write(line)
+            outputStream.newLine()
+        }
+    }
+    while (count != 0) {
+        outputStream.write(maxInt.toString())
+        outputStream.newLine()
+        count--
+    }
+    outputStream.close()
 }
 
 /**

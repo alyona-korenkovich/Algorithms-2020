@@ -79,8 +79,58 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
      *
      * Средняя
      */
+
+
+    /*
+    Чтобы два раза не проходиться по дереву в основном методе remove(), во вспомогательном методе возвращается
+    пара значений - сам узел и то, содержится ли он в дереве (т.е. чтобы не вызывать метод contains)
+
+    Быстродействие: O(h), где h - высота дерева
+    O(log(n)) - в среднем, O(n) - в худшем случае
+    Ресурсоёмкость: S(const)
+     */
+
     override fun remove(element: T): Boolean {
-        TODO()
+        val pair = remove(root, element)
+        root = pair.first
+        return if (pair.second) {
+            size--
+            true
+        } else false
+    }
+
+    private fun remove(node: Node<T>?, element: T): Pair<Node<T>?, Boolean> {
+        if (node == null) return Pair(node, false)
+        when (element.compareTo(node.value)) {
+            -1 -> {
+                val pair = remove(node.left, element)
+                node.left = pair.first
+                return Pair(node, pair.second)
+            }
+            0 -> {
+                when {
+                    //Если у родителя есть только один ребёнок
+                    node.left == null -> return Pair(node.right, true)
+                    node.right == null -> return Pair(node.left, true)
+                    //Если у родителя есть оба ребёнка
+                    else -> {
+                        var min = node.right
+                        while (min!!.left != null) {
+                            min = min.left
+                        }
+                        val newNode = Node(min.value)
+                        newNode.left = node.left
+                        newNode.right = remove(node.right, min.value).first
+                        return Pair(newNode, true)
+                    }
+                }
+            }
+            else -> {
+                val pair = remove(node.right, element)
+                node.right = pair.first
+                return Pair(node, pair.second)
+            }
+        }
     }
 
     override fun comparator(): Comparator<in T>? =
@@ -90,6 +140,18 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
         BinarySearchTreeIterator()
 
     inner class BinarySearchTreeIterator internal constructor() : MutableIterator<T> {
+        private val queue = LinkedList<Node<T>>()
+        private var currNode: Node<T>? = null
+
+        init {
+            if (root != null) inOrder(root)
+        }
+
+        private fun inOrder(node: Node<T>?) {
+            if (node!!.left != null) inOrder(node.left)
+            queue.add(node)
+            if (node.right != null) inOrder(node.right)
+        }
 
         /**
          * Проверка наличия следующего элемента
@@ -101,9 +163,13 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
          *
          * Средняя
          */
+
+        /*
+        Быстродействие: O(const)
+        ресурсоёмкость: S(const)
+         */
         override fun hasNext(): Boolean {
-            // TODO
-            throw NotImplementedError()
+            return queue.peek() != null
         }
 
         /**
@@ -119,9 +185,13 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
          *
          * Средняя
          */
+        /*
+        Быстродействие: O(const)
+        ресурсоёмкость: S(const)
+         */
         override fun next(): T {
-            // TODO
-            throw NotImplementedError()
+            currNode = queue.remove()
+            return currNode!!.value
         }
 
         /**
@@ -136,9 +206,14 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
          *
          * Сложная
          */
+        /*
+        Быстродействие: O(log(n)) - в среднем, O(n) - в худшем случае
+        ресурсоёмкость: S(const)
+         */
         override fun remove() {
-            // TODO
-            throw NotImplementedError()
+            check(currNode != null)
+            this@KtBinarySearchTree.remove(currNode!!.value)
+            currNode = null
         }
 
     }
