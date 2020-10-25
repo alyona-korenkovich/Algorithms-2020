@@ -110,19 +110,19 @@ fun longestCommonSubstring(first: String, second: String): String {
         return first
     }
 
-    val table = arrayOfNulls<IntArray>(first.length)
+    val table = Array(first.length) { _ -> IntArray(second.length) }
     for (i in table.indices) {
         table[i] = IntArray(second.length)
-        for (j in table[i]!!.indices) {
+        for (j in table[i].indices) {
             if (first[i] == second[j]) {
-                table[i]!![j] = if (i != 0 && j != 0) {
-                    table[i - 1]!![j - 1] + 1
+                table[i][j] = if (i != 0 && j != 0) {
+                    table[i - 1][j - 1] + 1
                 } else {
                     1
                 }
             }
-            if (table[i]!![j] > maxLength) {
-                maxLength = table[i]!![j]
+            if (table[i][j] > maxLength) {
+                maxLength = table[i][j]
                 maxI = i
             }
         }
@@ -162,13 +162,13 @@ fun calcPrimesNumber(limit: Int): Int {
         while (y * y < limit) {
             var n = (4 * x * x) + (y * y)
             if (n <= limit && (n % 12 == 1 || n % 12 == 5))
-                sieve[n] = sieve[n] xor true
+                sieve[n] = !sieve[n]
             n = (3 * x * x) + (y * y)
             if (n <= limit && n % 12 == 7)
-                sieve[n] = sieve[n] xor true
+                sieve[n] = !sieve[n]
             n = (3 * x * x) - (y * y)
             if (x > y && n <= limit && n % 12 == 11)
-                sieve[n] = sieve[n] xor true
+                sieve[n] = !sieve[n]
             y++
         }
         x++

@@ -174,11 +174,7 @@ fun sortSequence(inputName: String, outputName: String) {
     //запись в мапу по типу "число - количество его вхождений в последовательность"
     for (line in file) {
         val digit = line.toInt()
-        if (map.containsKey(digit)) {
-            map[digit] = map[digit]!! + 1
-        } else {
-            map[digit] = 1
-        }
+        map[digit] = map.getOrPut(digit, { 0 }) + 1
     }
     //поиск чисел с максимальным числом вхождений
     for ((key, value) in map) {

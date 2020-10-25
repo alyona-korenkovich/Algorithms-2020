@@ -7,7 +7,7 @@ import kotlin.math.max
 class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), CheckableSortedSet<T> {
 
     private class Node<T>(
-        val value: T
+        val value: T,
     ) {
         var left: Node<T>? = null
         var right: Node<T>? = null
@@ -144,13 +144,14 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
         private var currNode: Node<T>? = null
 
         init {
-            if (root != null) inOrder(root)
+            inOrder(root)
         }
 
         private fun inOrder(node: Node<T>?) {
-            if (node!!.left != null) inOrder(node.left)
-            queue.add(node)
-            if (node.right != null) inOrder(node.right)
+            if (node != null) {
+                queue.push(node)
+                inOrder(node.left)
+            }
         }
 
         /**
@@ -168,9 +169,7 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
         Быстродействие: O(const)
         ресурсоёмкость: S(const)
          */
-        override fun hasNext(): Boolean {
-            return queue.peek() != null
-        }
+        override fun hasNext(): Boolean = queue.isNotEmpty()
 
         /**
          * Получение следующего элемента
@@ -190,7 +189,8 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
         ресурсоёмкость: S(const)
          */
         override fun next(): T {
-            currNode = queue.remove()
+            currNode = queue.pop()
+            inOrder(currNode!!.right)
             return currNode!!.value
         }
 
@@ -208,14 +208,11 @@ class KtBinarySearchTree<T : Comparable<T>> : AbstractMutableSet<T>(), Checkable
          */
         /*
         Быстродействие: O(log(n)) - в среднем, O(n) - в худшем случае
-        ресурсоёмкость: S(const)
+        Ресурсоёмкость: S(const)
          */
         override fun remove() {
-            check(currNode != null)
-            this@KtBinarySearchTree.remove(currNode!!.value)
-            currNode = null
+            if (currNode == null || !remove(currNode!!.value)) throw IllegalStateException()
         }
-
     }
 
     /**
