@@ -110,9 +110,8 @@ fun longestCommonSubstring(first: String, second: String): String {
         return first
     }
 
-    val table = Array(first.length) { _ -> IntArray(second.length) }
+    val table = Array(first.length) { IntArray(second.length) }
     for (i in table.indices) {
-        table[i] = IntArray(second.length)
         for (j in table[i].indices) {
             if (first[i] == second[j]) {
                 table[i][j] = if (i != 0 && j != 0) {

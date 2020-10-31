@@ -106,10 +106,17 @@ abstract class AbstractBinarySearchTreeTest {
         }
     }
 
-    //Считаю уже имеющиеся здесь тесты достаточными
+    /* Хоть и тесты, с моей точки зрения, достаточные и проверяют все возможные случаи,
+    всё равно решила добавить в каждый из них по несколько строк, чисто для соблюдения формальности
+     */
 
     protected fun doRemoveTest() {
         implementationTest { create().remove(0) }
+
+        val testSet = mutableSetOf(10, 4, 8, 9, 15, 21)
+        val removeInt = 3
+        assertFalse(testSet.remove(removeInt))
+
         val random = Random()
         for (iteration in 1..100) {
             val controlSet = mutableSetOf<Int>()
@@ -166,11 +173,13 @@ abstract class AbstractBinarySearchTreeTest {
         }
     }
 
-    //Считаю уже имеющиеся здесь тесты достаточными
-
     protected fun doIteratorTest() {
         implementationTest { create().iterator().hasNext() }
         implementationTest { create().iterator().next() }
+
+        val testSet = TreeSet<Int>()
+        assertFailsWith<NoSuchElementException> { testSet.iterator().next() }
+
         val random = Random()
         for (iteration in 1..100) {
             val controlSet = TreeSet<Int>()
@@ -211,10 +220,15 @@ abstract class AbstractBinarySearchTreeTest {
         }
     }
 
-    //Считаю уже имеющиеся здесь тесты достаточными
-
     protected fun doIteratorRemoveTest() {
         implementationTest { create().iterator().remove() }
+
+        val testSet = TreeSet(listOf(8, 10, 19, 1, 38, 14))
+        val removeInt = 19
+        val finalSet = TreeSet(listOf(8, 10, 1, 38, 14))
+        testSet.remove(removeInt)
+        assertEquals(finalSet, testSet)
+
         val random = Random()
         for (iteration in 1..100) {
             val controlSet = TreeSet<Int>()
