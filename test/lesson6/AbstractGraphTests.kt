@@ -2,6 +2,7 @@ package lesson6
 
 import lesson6.impl.GraphBuilder
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 abstract class AbstractGraphTests {
@@ -216,8 +217,7 @@ abstract class AbstractGraphTests {
         }.build()
         assertEquals(
             setOf(unconnected["A"], unconnected["C"], unconnected["E"]),
-            unconnected.largestIndependentVertexSet()
-        )
+            unconnected.largestIndependentVertexSet())
         val graph = GraphBuilder().apply {
             val a = addVertex("A")
             val b = addVertex("B")
@@ -258,6 +258,52 @@ abstract class AbstractGraphTests {
             setOf(cross["A"], cross["B"], cross["C"], cross["D"]),
             cross.largestIndependentVertexSet()
         )
+        val max = GraphBuilder().apply {
+            val e = addVertex("E")
+            val a = addVertex("A")
+            val b = addVertex("B")
+            val c = addVertex("C")
+            val d = addVertex("D")
+            val i = addVertex("I")
+            val f = addVertex("F")
+            val j = addVertex("J")
+            val g = addVertex("G")
+            addConnection(a, e)
+            addConnection(a, b)
+            addConnection(b, c)
+            addConnection(c, d)
+            addConnection(d, i)
+            addConnection(d, f)
+            addConnection(d, g)
+            addConnection(i, j)
+        }.build()
+        assertEquals(
+            setOf(max["A"], max["C"], max["I"], max["F"], max["G"]),
+            max.largestIndependentVertexSet()
+        )
+        val cycle = GraphBuilder().apply {
+            val a = addVertex("A")
+            val b = addVertex("B")
+            val c = addVertex("C")
+            val d = addVertex("D")
+            val e = addVertex("E")
+            val f = addVertex("F")
+            val h = addVertex("H")
+            val i = addVertex("I")
+            val j = addVertex("J")
+            addConnection(a, b)
+            addConnection(a, f)
+            addConnection(b, c)
+            addConnection(c, d)
+            addConnection(d, e)
+            addConnection(e, f)
+            addConnection(f, h)
+            addConnection(j, h)
+            addConnection(i, j)
+        }.build()
+        assertFailsWith<IllegalStateException>("The graph has a cycle") {
+            cycle.largestIndependentVertexSet()
+        }
     }
 
     fun longestSimplePath(longestSimplePath: Graph.() -> Path) {
@@ -351,6 +397,25 @@ abstract class AbstractGraphTests {
         }.build()
         val longestPath3 = graph3.longestSimplePath()
         assertEquals(6, longestPath3.length)
+        val graph4 = GraphBuilder().apply {
+            val v1 = addVertex("1")
+            val v2 = addVertex("2")
+            val v3 = addVertex("3")
+            val v4 = addVertex("4")
+            val v5 = addVertex("5")
+            val v6 = addVertex("6")
+            val v7 = addVertex("7")
+            addConnection(v1, v2)
+            addConnection(v2, v3)
+            addConnection(v2, v6)
+            addConnection(v2, v5)
+            addConnection(v2, v4)
+            addConnection(v3, v7)
+            addConnection(v5, v6)
+            addConnection(v6, v7)
+        }.build()
+        val longestPath4 = graph4.longestSimplePath()
+        assertEquals(5, longestPath4.length)
     }
 
     fun baldaSearcher(baldaSearcher: (String, Set<String>) -> Set<String>) {

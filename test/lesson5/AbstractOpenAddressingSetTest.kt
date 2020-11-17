@@ -40,6 +40,11 @@ abstract class AbstractOpenAddressingSetTest {
     }
 
     protected fun doRemoveTest() {
+        //Считаю тесты достаточными; добавляю свои из формальности
+        val testSet = mutableSetOf<String>()
+        val removeString = "u26Dm54ou4"
+        assertFalse(testSet.remove(removeString))
+
         val random = Random()
         for (iteration in 1..100) {
             val bitsNumber = random.nextInt(4) + 6
@@ -79,6 +84,9 @@ abstract class AbstractOpenAddressingSetTest {
     }
 
     protected fun doIteratorTest() {
+        val testSet = mutableSetOf<String>()
+        assertFailsWith<NoSuchElementException> { testSet.iterator().next() }
+
         val random = Random()
         for (iteration in 1..100) {
             val controlSet = mutableSetOf<String>()
@@ -113,7 +121,7 @@ abstract class AbstractOpenAddressingSetTest {
                 controlSet.isEmpty(),
                 "OpenAddressingSetIterator doesn't traverse the entire set."
             )
-            assertFailsWith<IllegalStateException>("Something was supposedly returned after the elements ended") {
+            assertFailsWith<NoSuchElementException>("Something was supposedly returned after the elements ended") {
                 openAddressingSetIter.next()
             }
             println("All clear!")
@@ -121,6 +129,12 @@ abstract class AbstractOpenAddressingSetTest {
     }
 
     protected fun doIteratorRemoveTest() {
+        val testSet = mutableSetOf("", "HoiA", "u26Dm54ou4", "v13elr", " ", "FqnRf8K")
+        val removeString = "v13elr"
+        val finalSet = mutableSetOf("", "HoiA", "u26Dm54ou4", " ", "FqnRf8K")
+        testSet.remove(removeString)
+        assertEquals(finalSet, testSet)
+
         val random = Random()
         for (iteration in 1..100) {
             val controlSet = mutableSetOf<String>()

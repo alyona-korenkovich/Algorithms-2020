@@ -4,6 +4,7 @@ import kotlin.test.assertEquals
 
 abstract class AbstractDynamicTests {
     fun longestCommonSubSequence(longestCommonSubSequence: (String, String) -> String) {
+        assertEquals("", longestCommonSubSequence("", ""))
         assertEquals("", longestCommonSubSequence("мой мир", "я"))
         assertEquals("1", longestCommonSubSequence("1", "1"))
         assertEquals("13", longestCommonSubSequence("123", "13"))
@@ -35,6 +36,49 @@ abstract class AbstractDynamicTests {
                 """.trimIndent()
             ).length, "Answer must have length of $expectedLength2"
         )
+
+        val mayakovsky = """
+Все чаще думаю -
+не поставить ли лучше
+точку пули в своем конце.
+Сегодня я
+на всякий случай
+даю прощальный концерт.
+    """.trimIndent()
+        assertEquals(
+            mayakovsky, longestCommonSubSequence(
+                """
+За всех вас,
+которые нравились или нравятся,
+хранимых иконами у души в пещере,
+как чашу вина в застольной здравице,
+подъемлю стихами наполненный череп.
+Все чаще думаю -
+не поставить ли лучше
+точку пули в своем конце.
+Сегодня я
+на всякий случай
+даю прощальный концерт.
+            """.trimIndent(),
+                """
+Все чаще думаю -
+не поставить ли лучше
+точку пули в своем конце.
+Сегодня я
+на всякий случай
+даю прощальный концерт.
+Память!
+Собери у мозга в зале
+любимых неисчерпаемые очереди.
+Смех из глаз в глаза лей.
+Былыми свадьбами ночь ряди.
+Из тела в тело веселье лейте.
+Пусть не забудется ночь никем.
+Я сегодня буду играть на флейте.
+На собственном позвоночнике.
+            """.trimIndent()
+            )
+        )
     }
 
     fun longestIncreasingSubSequence(longestIncreasingSubSequence: (List<Int>) -> List<Int>) {
@@ -55,6 +99,8 @@ abstract class AbstractDynamicTests {
                 )
             )
         )
+        assertEquals(listOf(1), longestIncreasingSubSequence(listOf(1, 1, 1, 1, 1, 1)))
+        assertEquals(listOf(100), longestIncreasingSubSequence(listOf(100, 99, 98, 97, 96, 95)))
     }
 
     fun shortestPathOnField(shortestPathOnField: (String) -> Int) {
