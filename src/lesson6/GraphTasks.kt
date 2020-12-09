@@ -186,7 +186,7 @@ fun Graph.largestIndependentVertexSet(): Set<Graph.Vertex> {
  * Ответ: A, E, J, K, D, C, H, G, B, F, I
  */
 
-/*  Быстродействие: O(V + E)
+/*  Быстродействие: O(V^2) [худший случай]
     Ресурсоёмкость: S(V)
  */
 
